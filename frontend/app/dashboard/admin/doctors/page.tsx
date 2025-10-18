@@ -5,8 +5,8 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 type Booking = {
   _id: string;
-  user: { firstName?: string; lastName?: string; email?: string; phone?: string } | string;
-  doctor: { firstName?: string; lastName?: string; email?: string; speciality?: string } | string;
+  user: { firstName?: string; lastName?: string; email?: string; phone?: string } | string | null;
+  doctor: { firstName?: string; lastName?: string; email?: string; speciality?: string } | string | null;
   date: string;
   time: string;
   status: string;
@@ -43,8 +43,12 @@ export default function DotorBookingDetailPage() {
     if (!search) return bookings;
     const q = search.toLowerCase();
     return bookings.filter(b => {
-      const patient = typeof b.user === 'string' ? b.user : `${b.user.firstName || ''} ${b.user.lastName || ''} ${b.user.email || ''}`;
-      const doc = typeof b.doctor === 'string' ? b.doctor : `${b.doctor.firstName || ''} ${b.doctor.lastName || ''} ${b.doctor.email || ''} ${b.doctor.speciality || ''}`;
+      const patient = typeof b.user === 'string'
+        ? b.user
+        : `${b.user?.firstName || ''} ${b.user?.lastName || ''} ${b.user?.email || ''}`;
+      const doc = typeof b.doctor === 'string'
+        ? b.doctor
+        : `${b.doctor?.firstName || ''} ${b.doctor?.lastName || ''} ${b.doctor?.email || ''} ${b.doctor?.speciality || ''}`;
       return [patient, doc, b.date, b.time, b.status].some(v => (v || '').toString().toLowerCase().includes(q));
     });
   }, [bookings, search]);
@@ -90,9 +94,9 @@ export default function DotorBookingDetailPage() {
                   ) : (
                     filtered.map((b) => (
                       <tr key={b._id} className="border-t">
-                        <td className="px-6 py-3">{typeof b.user === 'string' ? b.user : `${b.user.firstName || ''} ${b.user.lastName || ''}`}</td>
-                        <td className="px-6 py-3">{typeof b.doctor === 'string' ? b.doctor : `${b.doctor.firstName || ''} ${b.doctor.lastName || ''}`}</td>
-                        <td className="px-6 py-3">{typeof b.doctor === 'string' ? '' : b.doctor.speciality || '-'}</td>
+                        <td className="px-6 py-3">{typeof b.user === 'string' ? b.user : `${b.user?.firstName || ''} ${b.user?.lastName || ''}`}</td>
+                        <td className="px-6 py-3">{typeof b.doctor === 'string' ? b.doctor : `${b.doctor?.firstName || ''} ${b.doctor?.lastName || ''}`}</td>
+                        <td className="px-6 py-3">{typeof b.doctor === 'string' ? '' : b.doctor?.speciality || '-'}</td>
                         <td className="px-6 py-3">{formatDateTime(b.date, b.time)}</td>
                         <td className="px-6 py-3">
                           <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${b.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
